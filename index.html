@@ -5,92 +5,81 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover"/>
 <title>NIC Chandauli Attendance Portal</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"/>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"/>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tabler-icons/2.44.0/tabler-icons.min.css"/>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
 <style>
 :root{
-  --blue:#1A56DB;
-  --blue-dark:#0F3D96;
-  --blue-light:#EEF4FF;
-  --blue-mid:#DBEAFE;
+  --navy:#0B1F44;
+  --navy-2:#122A5E;
+  --navy-3:#1B3A73;
+  --orange:#FF7A1A;
+  --orange-dark:#E4650A;
   --green:#16a34a;
   --green-light:#dcfce7;
   --red:#dc2626;
   --red-light:#fee2e2;
-  --saffron:#FF9933;
-  --bg:#EEF2FB;
+  --bg:#F1F4FA;
   --card:#ffffff;
   --text:#0F172A;
   --muted:#64748B;
-  --border:#CBD5E1;
-  --border-light:#E2E8F0;
+  --border:#E2E8F0;
   --font:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;
 }
 *{box-sizing:border-box;margin:0;padding:0}
 html,body{background:var(--bg);min-height:100vh;font-family:var(--font)}
-.app{max-width:420px;margin:0 auto;min-height:100vh;display:flex;flex-direction:column;background:var(--bg);box-shadow:0 0 40px rgba(15,23,42,0.06)}
+.app{max-width:420px;margin:0 auto;min-height:100vh;display:flex;flex-direction:column;background:var(--bg);box-shadow:0 0 40px rgba(15,23,42,0.08);position:relative}
 
 /* TRICOLOR STRIP */
-.tricolor{display:flex;height:4px;width:100%;flex-shrink:0}
+.tricolor{display:flex;height:3px;width:100%;flex-shrink:0}
 .tricolor span{flex:1}
 .tricolor span:nth-child(1){background:#FF9933}
 .tricolor span:nth-child(2){background:#ffffff}
 .tricolor span:nth-child(3){background:#138808}
 
-/* HEADER */
-.header{
-  background:linear-gradient(135deg,#0B2E7A 0%,#1A56DB 55%,#3B82F6 100%);
-  padding:26px 20px 30px;
-  position:relative;
-  overflow:hidden;
-  text-align:center;
+/* TOP BAR */
+.topbar{
+  background:linear-gradient(160deg,var(--navy) 0%,var(--navy-3) 100%);
+  padding:16px 18px 46px;position:relative;overflow:hidden;
 }
-.header::before{
-  content:'';position:absolute;top:-40px;right:-40px;
-  width:160px;height:160px;border-radius:50%;
-  background:rgba(255,255,255,0.07);
+.topbar::before{content:'';position:absolute;top:-60px;right:-60px;width:180px;height:180px;border-radius:50%;background:rgba(255,255,255,0.05)}
+.topbar-row{display:flex;align-items:center;justify-content:space-between;position:relative;z-index:1}
+.topbar-left{display:flex;align-items:center;gap:11px}
+.topbar-icon{
+  width:36px;height:36px;border-radius:10px;background:rgba(255,255,255,0.12);
+  border:1px solid rgba(255,255,255,0.2);
+  display:flex;align-items:center;justify-content:center;font-size:16px;color:#fff;flex-shrink:0;
 }
-.header::after{
-  content:'';position:absolute;bottom:-60px;left:-20px;
-  width:200px;height:200px;border-radius:50%;
-  background:rgba(255,255,255,0.05);
-}
-.header-badge{
-  width:48px;height:48px;border-radius:14px;
-  background:rgba(255,255,255,0.16);
-  border:1.5px solid rgba(255,255,255,0.35);
-  display:flex;align-items:center;justify-content:center;
-  font-size:21px;color:#fff;margin:0 auto 10px;
-  position:relative;z-index:1;
-  box-shadow:0 4px 12px rgba(0,0,0,0.15);
-}
-.header-title{font-size:20px;font-weight:700;color:#fff;line-height:1.25;margin-bottom:2px;position:relative;z-index:1;text-align:center;letter-spacing:0.01em}
-.header-subtitle{font-size:12px;font-weight:500;color:rgba(255,255,255,0.72);position:relative;z-index:1;text-align:center;text-transform:uppercase;letter-spacing:0.09em;margin-bottom:8px}
-.header-time{font-size:12.5px;color:rgba(255,255,255,0.68);font-weight:400;position:relative;z-index:1;text-align:center;margin-top:2px;display:flex;align-items:center;justify-content:center;gap:5px}
-.header-user{
-  display:flex;align-items:center;justify-content:center;gap:8px;margin-top:8px;position:relative;z-index:1;
-  font-size:13px;color:#fff;text-align:center;font-weight:600;
-  background:rgba(255,255,255,0.14);border:1px solid rgba(255,255,255,0.25);
-  border-radius:999px;padding:6px 14px;width:fit-content;margin-left:auto;margin-right:auto;
-}
+.topbar-title{font-size:15px;font-weight:700;color:#fff;line-height:1.2}
+.topbar-sub{font-size:10.5px;font-weight:500;color:rgba(255,255,255,0.6);text-transform:uppercase;letter-spacing:0.08em;margin-top:1px}
+.topbar-clock{font-size:12px;font-weight:600;color:rgba(255,255,255,0.85);text-align:right}
+.topbar-clock span{display:block;font-size:9.5px;font-weight:500;color:rgba(255,255,255,0.5);margin-top:1px;text-transform:uppercase;letter-spacing:0.06em}
 
-/* BODY */
-.body{padding:20px 16px;flex:1;display:flex;flex-direction:column;gap:14px}
+/* SHEET */
+.sheet{
+  background:var(--bg);
+  border-radius:22px 22px 0 0;
+  margin-top:-28px;position:relative;z-index:2;
+  flex:1;display:flex;flex-direction:column;
+  padding:20px 16px 24px;gap:14px;
+}
 
 /* CARDS */
 .card{
   background:var(--card);
   border-radius:18px;
-  border:1px solid var(--border-light);
+  border:1px solid var(--border);
   padding:18px;
   box-shadow:0 1px 3px rgba(15,23,42,0.04),0 8px 20px -6px rgba(15,23,42,0.06);
+  animation:fadeIn .25s ease both;
 }
 .card-title{
-  font-size:11px;font-weight:600;color:var(--muted);
+  font-size:11px;font-weight:700;color:var(--muted);
   text-transform:uppercase;letter-spacing:0.08em;
   display:flex;align-items:center;gap:6px;margin-bottom:14px;
 }
-.card-title i{font-size:14px;color:var(--blue)}
+.card-title i{font-size:14px;color:var(--navy-3)}
 
 /* INPUT */
 .input-group{
@@ -98,11 +87,11 @@ html,body{background:var(--bg);min-height:100vh;font-family:var(--font)}
   border:1.5px solid var(--border);border-radius:14px;overflow:hidden;
   background:#fff;transition:border-color .2s,box-shadow .2s;
 }
-.input-group:focus-within{border-color:var(--blue);box-shadow:0 0 0 3px rgba(26,86,219,0.12)}
+.input-group:focus-within{border-color:var(--navy-3);box-shadow:0 0 0 3px rgba(27,58,115,0.12)}
 .input-prefix{
   padding:0 14px;font-size:14px;font-weight:500;color:var(--muted);
   background:#F8FAFF;align-self:stretch;display:flex;align-items:center;
-  border-right:1.5px solid var(--border-light);gap:6px;white-space:nowrap;
+  border-right:1.5px solid var(--border);gap:6px;white-space:nowrap;
 }
 .input-group input{
   flex:1;border:none;padding:15px 14px;font-size:16px;font-weight:500;
@@ -115,161 +104,46 @@ html,body{background:var(--bg);min-height:100vh;font-family:var(--font)}
 .user-chip{
   display:flex;align-items:center;gap:12px;
   padding:13px 14px;
-  background:var(--blue-light);
-  border:1px solid var(--blue-mid);
+  background:#EEF3FF;
+  border:1px solid #D9E4FA;
   border-radius:14px;margin-top:12px;
 }
 .avatar{
   width:42px;height:42px;border-radius:12px;
-  background:linear-gradient(135deg,var(--blue-dark),var(--blue));
+  background:linear-gradient(135deg,var(--navy),var(--navy-3));
   color:#fff;display:flex;align-items:center;justify-content:center;
   font-size:14px;font-weight:700;flex-shrink:0;letter-spacing:0.03em;
 }
 .user-chip-name{font-size:14px;font-weight:600;color:var(--text)}
-.user-chip-mob{font-size:12px;color:var(--blue);margin-top:2px;font-weight:500}
-
-/* SELFIE PLACEHOLDER */
-.selfie-placeholder{
-  display:flex;gap:12px;align-items:center;
-  padding:14px;background:#F8FAFF;border-radius:14px;
-  border:1.5px dashed var(--border);
-}
-.selfie-ic{
-  width:44px;height:44px;border-radius:12px;display:flex;align-items:center;
-  justify-content:center;flex-shrink:0;font-size:20px;
-  background:var(--blue-light);color:var(--blue);
-}
-.selfie-title{font-size:14px;font-weight:600;color:var(--text);margin-bottom:2px}
-.selfie-sub{font-size:12px;color:var(--muted);line-height:1.4}
+.user-chip-mob{font-size:12px;color:var(--navy-3);margin-top:2px;font-weight:500}
 
 /* BUTTONS */
 .btn-primary{
   width:100%;padding:16px;border:none;border-radius:14px;
-  background:linear-gradient(135deg,var(--blue-dark),var(--blue));
-  color:#fff;font-size:15px;font-weight:600;cursor:pointer;
+  background:linear-gradient(135deg,var(--orange-dark),var(--orange));
+  color:#fff;font-size:15px;font-weight:700;cursor:pointer;
   display:flex;align-items:center;justify-content:center;gap:8px;
   transition:opacity .15s,transform .1s;
-  box-shadow:0 4px 14px rgba(26,86,219,0.3);
-  font-family:var(--font);
+  box-shadow:0 6px 16px rgba(255,122,26,0.35);
+  font-family:var(--font);letter-spacing:0.02em;
 }
 .btn-primary:hover{opacity:0.92}
 .btn-primary:active{transform:scale(0.98)}
-.btn-primary:disabled{
-  background:var(--border-light);color:var(--border);
-  cursor:not-allowed;box-shadow:none;
-}
+.btn-primary:disabled{background:var(--border);color:#A8B3C4;cursor:not-allowed;box-shadow:none}
 .btn-secondary{
   width:100%;padding:14px;border:1.5px solid var(--border);border-radius:14px;
-  background:#fff;color:var(--text);font-size:14px;font-weight:500;cursor:pointer;
+  background:#fff;color:var(--text);font-size:14px;font-weight:600;cursor:pointer;
   display:flex;align-items:center;justify-content:center;gap:7px;
   transition:background .15s;font-family:var(--font);
 }
 .btn-secondary:hover{background:#F8FAFF}
-.btn-secondary:active{background:var(--border-light)}
-.btn-whatsapp{
-  width:100%;padding:16px;border:none;border-radius:14px;
-  background:linear-gradient(135deg,#128C7E,#25D366);
-  color:#fff;font-size:15px;font-weight:600;cursor:pointer;
-  display:flex;align-items:center;justify-content:center;gap:8px;
-  transition:opacity .15s,transform .1s;
-  box-shadow:0 4px 14px rgba(37,211,102,0.3);
-  font-family:var(--font);
-}
-.btn-whatsapp:hover{opacity:0.92}
-.btn-whatsapp:active{transform:scale(0.98)}
-.btn-whatsapp:disabled{
-  background:var(--border-light);color:var(--border);
-  cursor:not-allowed;box-shadow:none;
-}
+.btn-secondary:active{background:var(--border)}
+.btn-secondary:disabled{opacity:0.5;cursor:not-allowed}
 
-/* SCREEN */
-.screen{display:none}.screen.active{display:flex;flex-direction:column;min-height:100vh}
+/* LOCATION CTA */
+.loc-cta-status{min-height:20px;font-size:13px;display:flex;align-items:center;justify-content:center;gap:6px;margin-top:10px}
 
-/* SUCCESS HEADER */
-.suc-header{
-  background:linear-gradient(135deg,#0f3d1f 0%,#16a34a 60%,#22c55e 100%);
-  padding:32px 20px 36px;position:relative;overflow:hidden;text-align:center;
-}
-.suc-header::before{
-  content:'';position:absolute;top:-50px;right:-50px;
-  width:180px;height:180px;border-radius:50%;
-  background:rgba(255,255,255,0.07);
-}
-.suc-badge{
-  width:64px;height:64px;border-radius:20px;
-  background:rgba(255,255,255,0.2);
-  border:2px solid rgba(255,255,255,0.3);
-  display:flex;align-items:center;justify-content:center;
-  font-size:30px;color:#fff;margin:0 auto 14px;position:relative;z-index:1;
-}
-.suc-title{font-size:22px;font-weight:700;color:#fff;margin-bottom:4px;position:relative;z-index:1}
-.suc-sub{font-size:13px;color:rgba(255,255,255,0.7);position:relative;z-index:1}
-
-/* REPORT TABLE */
-.report-row{display:flex;align-items:center;padding:10px 0;gap:10px}
-.report-row+.report-row{border-top:1px solid var(--border-light)}
-.report-key{font-size:12px;color:var(--muted);width:70px;flex-shrink:0;display:flex;align-items:center;gap:5px}
-.report-key i{font-size:13px;color:var(--blue);opacity:0.7}
-.report-val{font-size:14px;font-weight:600;color:var(--text)}
-
-@keyframes spin{to{transform:rotate(360deg)}}
-.spinning{animation:spin 1s linear infinite;display:inline-block}
-
-@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
-.card{animation:fadeIn .25s ease both}
-
-.app-footer{
-  text-align:center;font-size:11px;color:var(--muted);
-  letter-spacing:0.03em;padding:8px 24px 22px;opacity:0.75;
-}
-
-/* LOCATION STATUS BADGE */
-.loc-badge{
-  width:76px;height:76px;border-radius:24px;margin:0 auto 18px;
-  display:flex;align-items:center;justify-content:center;
-  font-size:32px;transition:background .2s,color .2s;
-  background:var(--blue-light);color:var(--blue);
-}
-.loc-badge.state-error{background:var(--red-light);color:var(--red)}
-.loc-badge.state-success{background:var(--green-light);color:var(--green)}
-.loc-badge .spinning{display:inline-block}
-.loc-pill{
-  display:inline-flex;align-items:center;gap:6px;
-  padding:9px 16px;border-radius:999px;font-size:13px;font-weight:600;
-}
-.loc-pill.state-success{background:var(--green-light);color:var(--green)}
-.loc-pill.state-error{background:var(--red-light);color:var(--red)}
-
-/* CAMERA MODAL */
-.cam-overlay{
-  display:none;position:fixed;inset:0;background:#000;z-index:999;
-  flex-direction:column;align-items:center;justify-content:center;
-}
-.cam-overlay.active{display:flex}
-.cam-video-wrap{
-  position:relative;width:100%;max-width:420px;flex:1;
-  display:flex;align-items:center;justify-content:center;overflow:hidden;background:#000;
-}
-.cam-video-wrap video{width:100%;height:100%;object-fit:cover;transform:scaleX(-1)}
-.cam-error{color:#fff;text-align:center;padding:24px;font-size:14px;line-height:1.6}
-.cam-controls{
-  width:100%;max-width:420px;padding:20px 24px 32px;
-  display:flex;align-items:center;justify-content:space-between;
-  background:#000;
-}
-.cam-close-btn,.cam-switch-btn{
-  width:46px;height:46px;border-radius:50%;border:none;
-  background:rgba(255,255,255,0.15);color:#fff;font-size:20px;
-  display:flex;align-items:center;justify-content:center;cursor:pointer;
-}
-.cam-shutter{
-  width:70px;height:70px;border-radius:50%;background:#fff;
-  border:4px solid rgba(255,255,255,0.4);cursor:pointer;
-  display:flex;align-items:center;justify-content:center;
-}
-.cam-shutter:active{transform:scale(0.94)}
-
-/* ATTENDANCE TYPE TOGGLE */
+/* TYPE TOGGLE */
 .type-toggle{display:flex;gap:10px}
 .type-opt{
   flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;
@@ -280,56 +154,113 @@ html,body{background:var(--bg);min-height:100vh;font-family:var(--font)}
 }
 .type-opt-icon{
   width:34px;height:34px;border-radius:10px;display:flex;align-items:center;justify-content:center;
-  font-size:17px;background:var(--border-light);color:var(--muted);transition:background .15s,color .15s;
+  font-size:17px;background:var(--border);color:var(--muted);transition:background .15s,color .15s;
 }
 .type-opt input{position:absolute;opacity:0;width:0;height:0}
-.type-opt-dot{display:none}
-.type-opt:has(input:checked){
-  border-color:var(--blue);background:var(--blue-light);
-  box-shadow:0 0 0 3px rgba(26,86,219,0.12);
-}
 #type-opt-in:has(input:checked){border-color:var(--green);background:var(--green-light);box-shadow:0 0 0 3px rgba(22,163,74,0.12)}
-#type-opt-out:has(input:checked){border-color:var(--red);background:var(--red-light);box-shadow:0 0 0 3px rgba(220,38,38,0.12)}
+#type-opt-out:has(input:checked){border-color:var(--orange);background:#FFF1E6;box-shadow:0 0 0 3px rgba(255,122,26,0.12)}
 #type-opt-in:has(input:checked) .type-opt-icon{background:var(--green);color:#fff}
-#type-opt-out:has(input:checked) .type-opt-icon{background:var(--red);color:#fff}
-/* JS fallback class for browsers without :has() support */
+#type-opt-out:has(input:checked) .type-opt-icon{background:var(--orange);color:#fff}
 #type-opt-in.checked{border-color:var(--green);background:var(--green-light);box-shadow:0 0 0 3px rgba(22,163,74,0.12)}
-#type-opt-out.checked{border-color:var(--red);background:var(--red-light);box-shadow:0 0 0 3px rgba(220,38,38,0.12)}
+#type-opt-out.checked{border-color:var(--orange);background:#FFF1E6;box-shadow:0 0 0 3px rgba(255,122,26,0.12)}
 #type-opt-in.checked .type-opt-icon{background:var(--green);color:#fff}
-#type-opt-out.checked .type-opt-icon{background:var(--red);color:#fff}
+#type-opt-out.checked .type-opt-icon{background:var(--orange);color:#fff}
+
+/* SCREEN */
+.screen{display:none}.screen.active{display:flex;flex-direction:column;min-height:100vh}
+
+/* FACE CAPTURE CIRCLE */
+.face-capture-wrap{display:flex;flex-direction:column;align-items:center;gap:14px}
+.face-circle{
+  width:170px;height:170px;border-radius:50%;
+  border:3px dashed var(--border);
+  display:flex;align-items:center;justify-content:center;
+  position:relative;overflow:hidden;background:#F8FAFF;flex-shrink:0;cursor:pointer;
+}
+.face-circle.has-photo{border-style:solid;border-color:var(--green)}
+.face-circle img{width:100%;height:100%;object-fit:cover;display:none}
+.face-circle-placeholder{display:flex;flex-direction:column;align-items:center;gap:8px;color:var(--muted)}
+.face-circle-placeholder i{font-size:34px}
+.face-circle-placeholder span{font-size:11.5px;font-weight:500;text-align:center;padding:0 20px}
+.face-check-badge{
+  position:absolute;bottom:6px;right:6px;width:30px;height:30px;border-radius:50%;
+  background:var(--green);color:#fff;display:none;align-items:center;justify-content:center;
+  font-size:15px;border:3px solid #fff;
+}
+.face-circle.has-photo .face-check-badge{display:flex}
+.face-circle.has-photo .face-circle-placeholder{display:none}
+.face-circle.has-photo img{display:block}
+
+/* MAP CARD */
+.map-card{padding:0;overflow:hidden}
+.map-card .card-title{padding:16px 18px 0;margin-bottom:10px}
+#attend-map{width:100%;height:150px;background:#E2E8F0}
+.map-footer{padding:12px 18px 16px;display:flex;align-items:center;justify-content:space-between;gap:10px}
+.map-footer-addr{font-size:12px;color:var(--muted);line-height:1.4;display:flex;align-items:flex-start;gap:6px}
+.map-footer-addr i{font-size:14px;color:var(--navy-3);margin-top:1px;flex-shrink:0}
+
+/* SUCCESS */
+.suc-badge{
+  width:64px;height:64px;border-radius:20px;
+  background:rgba(255,255,255,0.2);
+  border:2px solid rgba(255,255,255,0.3);
+  display:flex;align-items:center;justify-content:center;
+  font-size:30px;color:#fff;margin:0 auto 14px;position:relative;z-index:1;
+}
+
+@keyframes spin{to{transform:rotate(360deg)}}
+.spinning{animation:spin 1s linear infinite;display:inline-block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+
+.app-footer{text-align:center;font-size:11px;color:var(--muted);letter-spacing:0.03em;padding:6px 24px 4px;opacity:0.7}
+
+/* CAMERA MODAL */
+.cam-overlay{display:none;position:fixed;inset:0;background:#000;z-index:999;flex-direction:column;align-items:center;justify-content:center}
+.cam-overlay.active{display:flex}
+.cam-video-wrap{position:relative;width:100%;max-width:420px;flex:1;display:flex;align-items:center;justify-content:center;overflow:hidden;background:#000}
+.cam-video-wrap video{width:100%;height:100%;object-fit:cover;transform:scaleX(-1)}
+.face-guide{
+  position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
+  width:min(62vw,280px);height:min(62vw,280px);border-radius:50%;
+  box-shadow:0 0 0 2000px rgba(0,0,0,0.55);
+  border:3px solid rgba(255,255,255,0.85);
+  pointer-events:none;
+}
+.face-guide-label{
+  position:absolute;left:50%;bottom:14%;transform:translateX(-50%);
+  color:#fff;font-size:13px;font-weight:500;background:rgba(0,0,0,0.35);
+  padding:6px 14px;border-radius:999px;white-space:nowrap;pointer-events:none;
+}
+.cam-error{color:#fff;text-align:center;padding:24px;font-size:14px;line-height:1.6}
+.cam-controls{width:100%;max-width:420px;padding:20px 24px 32px;display:flex;align-items:center;justify-content:space-between;background:#000}
+.cam-close-btn,.cam-switch-btn{
+  width:46px;height:46px;border-radius:50%;border:none;
+  background:rgba(255,255,255,0.15);color:#fff;font-size:20px;
+  display:flex;align-items:center;justify-content:center;cursor:pointer;
+}
+.cam-shutter{width:70px;height:70px;border-radius:50%;background:#fff;border:4px solid rgba(255,255,255,0.4);cursor:pointer;display:flex;align-items:center;justify-content:center}
+.cam-shutter:active{transform:scale(0.94)}
 </style>
 </head>
 <body>
 <div class="app">
 <div class="tricolor"><span></span><span></span><span></span></div>
 
-<!-- LOCATION CHECK -->
-<div class="screen active" id="s-loc">
-  <div class="header">
-    <div class="header-badge"><i class="ti ti-building-bank"></i></div>
-    <div class="header-title">NIC Chandauli</div>
-    <div class="header-subtitle">Attendance Portal</div>
-    <div class="header-time" id="clk0"></div>
-  </div>
-  <div class="body" style="justify-content:center;flex:1">
-    <div class="card" style="text-align:center;padding:36px 24px">
-      <div id="loc-icon" class="loc-badge"><i class="ti ti-map-pin spinning"></i></div>
-      <div id="loc-title" style="font-size:17px;font-weight:700;color:var(--text);margin-bottom:8px">स्थान की जाँच हो रही है</div>
-      <div id="loc-msg" style="font-size:13.5px;color:var(--muted);line-height:1.6;margin-bottom:18px">कृपया प्रतीक्षा करें...</div>
-      <div id="loc-distance" class="loc-pill" style="display:none;margin-bottom:16px"></div>
-      <button id="loc-retry-btn" style="display:none" class="btn-secondary" onclick="checkLocation()"><i class="ti ti-refresh"></i> दोबारा कोशिश करें</button>
+<!-- FRONT PAGE: LOGIN + LOCATION -->
+<div class="screen active" id="s-login">
+  <div class="topbar">
+    <div class="topbar-row">
+      <div class="topbar-left">
+        <div class="topbar-icon"><i class="ti ti-building-bank"></i></div>
+        <div>
+          <div class="topbar-title">NIC Chandauli</div>
+          <div class="topbar-sub">Attendance Portal</div>
+        </div>
+      </div>
+      <div class="topbar-clock" id="clk1">--:--:--<span>Server Time</span></div>
     </div>
   </div>
-</div>
-
-<div class="screen" id="s-login">
-  <div class="header">
-    <div class="header-badge"><i class="ti ti-building-bank"></i></div>
-    <div class="header-title">NIC Chandauli</div>
-    <div class="header-subtitle">Attendance Portal</div>
-    <div class="header-time" id="clk1"></div>
-  </div>
-  <div class="body">
+  <div class="sheet">
     <div class="card">
       <div class="card-title"><i class="ti ti-device-mobile"></i> Mobile Number</div>
       <div class="input-group">
@@ -339,49 +270,74 @@ html,body{background:var(--bg);min-height:100vh;font-family:var(--font)}
       <div class="input-fb" id="mob-fb"></div>
       <div id="gchip"></div>
     </div>
-    <button class="btn-primary" id="btn-go" disabled onclick="goAttend()">
-      आगे बढ़ें
+
+    <button class="btn-primary" id="btn-loc" disabled onclick="requestLocation()">
+      <i class="ti ti-map-pin"></i> अपनी लोकेशन चालू करें
     </button>
+    <div class="loc-cta-status" id="loc-status"></div>
+
+    <div class="app-footer">National Informatics Centre · Chandauli, UP</div>
   </div>
-  <div class="app-footer">National Informatics Centre · Chandauli, UP</div>
 </div>
 
 <!-- ATTENDANCE -->
 <div class="screen" id="s-attend">
-  <div class="header">
-    <div class="header-badge"><i class="ti ti-building-bank"></i></div>
-    <div class="header-title">NIC Chandauli</div>
-    <div class="header-subtitle">Attendance Portal</div>
-    <div class="header-user" id="att-sub"></div>
-    <div class="header-time" id="clk2"></div>
+  <div class="topbar">
+    <div class="topbar-row">
+      <div class="topbar-left">
+        <div class="topbar-icon" onclick="logout()" style="cursor:pointer"><i class="ti ti-arrow-left"></i></div>
+        <div>
+          <div class="topbar-title">उपस्थिति दर्ज करें</div>
+          <div class="topbar-sub" id="att-sub">—</div>
+        </div>
+      </div>
+      <div class="topbar-clock" id="clk2">--:--:--<span>Server Time</span></div>
+    </div>
   </div>
-  <div class="body">
+  <div class="sheet">
+
     <div class="card">
       <div class="card-title"><i class="ti ti-clock"></i> समय का प्रकार</div>
       <div class="type-toggle">
         <label class="type-opt" id="type-opt-in">
           <input type="radio" name="att-type" value="in" onchange="onTypeChange()"/>
-          <span class="type-opt-dot"></span>
           <span class="type-opt-icon"><i class="ti ti-login-2"></i></span>
           <span>आने का समय</span>
         </label>
         <label class="type-opt" id="type-opt-out">
           <input type="radio" name="att-type" value="out" onchange="onTypeChange()"/>
-          <span class="type-opt-dot"></span>
           <span class="type-opt-icon"><i class="ti ti-logout-2"></i></span>
           <span>जाने का समय</span>
         </label>
       </div>
     </div>
+
     <div class="card">
-      <div class="card-title"><i class="ti ti-camera"></i> Selfie</div>
-      <img id="photo-preview" style="display:none;width:100%;border-radius:14px;margin-bottom:12px;max-height:280px;object-fit:cover"/>
-      <!-- Fallback file input, only used if live camera (getUserMedia) isn't supported -->
-      <input type="file" id="photo-input" accept="image/*" capture="user" style="display:none" onchange="onPhotoChosen(event)"/>
-      <button class="btn-secondary" id="photo-btn" onclick="openCamera()">
-        <i class="ti ti-camera"></i> फ़ोटो खींचे
-      </button>
+      <div class="card-title"><i class="ti ti-camera"></i> चेहरे की फ़ोटो</div>
+      <div class="face-capture-wrap">
+        <div class="face-circle" id="face-circle" onclick="openCamera()">
+          <div class="face-circle-placeholder">
+            <i class="ti ti-camera-plus"></i>
+            <span>फ़ोटो लेने के लिए टैप करें</span>
+          </div>
+          <img id="photo-preview"/>
+          <div class="face-check-badge"><i class="ti ti-check"></i></div>
+        </div>
+        <button class="btn-secondary" id="photo-btn" onclick="openCamera()" style="max-width:220px">
+          <i class="ti ti-camera"></i> फ़ोटो खींचे
+        </button>
+        <input type="file" id="photo-input" accept="image/*" capture="user" style="display:none" onchange="onPhotoChosen(event)"/>
+      </div>
     </div>
+
+    <div class="card map-card">
+      <div class="card-title"><i class="ti ti-map-2"></i> आपका वर्तमान स्थान</div>
+      <div id="attend-map"></div>
+      <div class="map-footer">
+        <div class="map-footer-addr"><i class="ti ti-map-pin"></i><span id="attend-dist-text">—</span></div>
+      </div>
+    </div>
+
     <button class="btn-primary" id="btn-sub" disabled onclick="doSubmit()">
       उपस्थिति दर्ज करें
     </button>
@@ -391,14 +347,13 @@ html,body{background:var(--bg);min-height:100vh;font-family:var(--font)}
 
 <!-- DONE -->
 <div class="screen" id="s-done">
-  <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 24px;text-align:center">
-    <div style="width:90px;height:90px;border-radius:28px;background:linear-gradient(135deg,#0f3d1f,#16a34a);display:flex;align-items:center;justify-content:center;font-size:42px;color:#fff;margin-bottom:28px;box-shadow:0 8px 24px rgba(22,163,74,0.35)">✓</div>
-    <div style="font-size:24px;font-weight:700;color:var(--text);margin-bottom:10px">सफलतापूर्वक भेजा गया!</div>
-    <div style="font-size:15px;color:var(--muted);line-height:1.6">आपकी उपस्थिति दर्ज हो गई है।<br>धन्यवाद!</div>
+  <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 24px;text-align:center;background:linear-gradient(180deg,#0f3d1f 0%,var(--bg) 340px)">
+    <div class="suc-badge">✓</div>
+    <div style="font-size:22px;font-weight:800;color:#fff;margin-bottom:6px;position:relative;z-index:1">सफलतापूर्वक भेजा गया!</div>
+    <div style="font-size:14px;color:rgba(255,255,255,0.85);line-height:1.6;margin-bottom:32px;position:relative;z-index:1">आपकी उपस्थिति दर्ज हो गई है। धन्यवाद!</div>
+    <div class="card" style="width:100%;max-width:340px;text-align:left" id="done-summary"></div>
   </div>
-  <div style="padding:20px 24px 28px;text-align:center;font-size:11.5px;color:var(--muted);letter-spacing:0.03em">
-    NIC Chandauli · Attendance Portal
-  </div>
+  <div class="app-footer" style="padding:16px 24px 24px">National Informatics Centre · Chandauli, UP</div>
 </div>
 
 </div>
@@ -407,6 +362,8 @@ html,body{background:var(--bg);min-height:100vh;font-family:var(--font)}
 <div class="cam-overlay" id="cam-overlay">
   <div class="cam-video-wrap" id="cam-video-wrap">
     <video id="cam-video" autoplay playsinline muted></video>
+    <div class="face-guide" id="face-guide"></div>
+    <div class="face-guide-label" id="face-guide-label">चेहरे को घेरे के अंदर रखें</div>
   </div>
   <div class="cam-controls">
     <button class="cam-close-btn" onclick="closeCamera()">✕</button>
@@ -425,71 +382,83 @@ var SHEET_URL = 'https://script.google.com/macros/s/AKfycbyeiQCipr0cUGPfAOIT4wVT
 // Office coordinates (Chandauli, UP)
 var OFFICE_LAT=25.26924645249046, OFFICE_LNG=83.26351636518584, MAX_DIST=300;
 
+// Fix Leaflet's default marker icons (otherwise they render broken when loaded from a CDN)
+L.Icon.Default.mergeOptions({
+  iconRetinaUrl:'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-icon-2x.png',
+  iconUrl:'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-icon.png',
+  shadowUrl:'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-shadow.png'
+});
+
 function getDistanceMeters(lat1,lng1,lat2,lng2){
   var R=6371000,dLat=(lat2-lat1)*Math.PI/180,dLng=(lng2-lng1)*Math.PI/180;
   var a=Math.sin(dLat/2)*Math.sin(dLat/2)+Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.sin(dLng/2)*Math.sin(dLng/2);
   return R*2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a));
 }
 
-function setLocBadge(iconClass,state){
-  var el=document.getElementById('loc-icon');
-  el.className='loc-badge'+(state?' state-'+state:'');
-  el.innerHTML='<i class="ti '+iconClass+'"></i>';
+var attendMapObj=null;
+function buildMap(containerId, dist){
+  var inRange = dist<=MAX_DIST;
+  var map=L.map(containerId,{zoomControl:false,attributionControl:false,dragging:false,scrollWheelZoom:false,tap:false});
+  map.setView([userLat,userLng],16);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19}).addTo(map);
+
+  var officeIcon=L.divIcon({className:'',html:'<div style="width:30px;height:30px;border-radius:50%;background:#0B1F44;border:3px solid #fff;box-shadow:0 2px 6px rgba(0,0,0,0.3);display:flex;align-items:center;justify-content:center;font-size:13px;color:#fff">🏢</div>',iconSize:[30,30],iconAnchor:[15,15]});
+  var userIcon=L.divIcon({className:'',html:'<div style="width:22px;height:22px;border-radius:50%;background:'+(inRange?'#16a34a':'#dc2626')+';border:3px solid #fff;box-shadow:0 2px 6px rgba(0,0,0,0.3)"></div>',iconSize:[22,22],iconAnchor:[11,11]});
+
+  L.circle([OFFICE_LAT,OFFICE_LNG],{radius:MAX_DIST,color:inRange?'#16a34a':'#dc2626',weight:1.5,fillColor:inRange?'#16a34a':'#dc2626',fillOpacity:0.12}).addTo(map);
+  L.marker([OFFICE_LAT,OFFICE_LNG],{icon:officeIcon}).addTo(map);
+  L.marker([userLat,userLng],{icon:userIcon}).addTo(map);
+
+  var bounds=L.latLngBounds([[userLat,userLng],[OFFICE_LAT,OFFICE_LNG]]);
+  map.fitBounds(bounds,{padding:[28,28],maxZoom:17});
+  return map;
 }
 
-function checkLocation(){
-  setLocBadge('ti-map-pin spinning','');
-  document.getElementById('loc-title').textContent='स्थान की जाँच हो रही है';
-  document.getElementById('loc-msg').textContent='कृपया प्रतीक्षा करें...';
-  document.getElementById('loc-distance').style.display='none';
-  document.getElementById('loc-retry-btn').style.display='none';
+// ---- Location (triggered by the "Turn on your location" button) ----
+function requestLocation(){
+  var statusEl=document.getElementById('loc-status');
+  var btn=document.getElementById('btn-loc');
+  btn.disabled=true;
+  statusEl.innerHTML='<i class="ti ti-loader spinning" style="color:var(--muted)"></i><span style="color:var(--muted)">लोकेशन जांची जा रही है...</span>';
+
   if(!navigator.geolocation){
-    locError('यह browser location support नहीं करता।');return;
+    statusEl.innerHTML='<i class="ti ti-alert-circle" style="color:var(--red)"></i><span style="color:var(--red)">यह browser location support नहीं करता।</span>';
+    btn.disabled=false;
+    return;
   }
+
   navigator.geolocation.getCurrentPosition(function(pos){
     userLat=pos.coords.latitude;
     userLng=pos.coords.longitude;
     var dist=Math.round(getDistanceMeters(userLat,userLng,OFFICE_LAT,OFFICE_LNG));
-    var distEl=document.getElementById('loc-distance');
-    distEl.style.display='inline-flex';
+
     if(dist<=MAX_DIST){
-      setLocBadge('ti-circle-check','success');
-      document.getElementById('loc-title').textContent='आप कार्यालय में हैं!';
-      document.getElementById('loc-msg').textContent='आपकी location verified हो गई है।';
-      distEl.className='loc-pill state-success';
-      distEl.innerHTML='<i class="ti ti-ruler-2"></i> दूरी: '+dist+' मीटर (कार्यालय से)';
-      setTimeout(function(){showScreen('s-login');},1200);
+      statusEl.innerHTML='<i class="ti ti-circle-check" style="color:var(--green)"></i><span style="color:var(--green);font-weight:600">सत्यापित! आगे बढ़ रहे हैं...</span>';
+      setTimeout(function(){ goAttend(); },900);
     } else {
-      setLocBadge('ti-map-pin-x','error');
-      document.getElementById('loc-title').textContent='आप बहुत दूर हैं!';
-      document.getElementById('loc-msg').textContent='उपस्थिति केवल कार्यालय के 300 मीटर के अंदर दर्ज की जा सकती है।';
-      distEl.className='loc-pill state-error';
-      distEl.innerHTML='<i class="ti ti-ruler-2"></i> आपकी दूरी: '+dist+' मीटर ('+MAX_DIST+' मीटर से अधिक)';
-      document.getElementById('loc-retry-btn').style.display='block';
+      statusEl.innerHTML='<i class="ti ti-map-pin-x" style="color:var(--red)"></i><span style="color:var(--red)">आप कार्यालय से '+dist+'मी दूर हैं, दायरे में नहीं।</span>';
+      btn.disabled=false;
     }
   },function(err){
-    var msg='Location नहीं मिली।';
-    if(err.code===1)msg='आपने लोकेशन की अनुमति नहीं दी है। कृपया लोकेशन की अनुमति दें और दोबारा कोशिश करें।';
-    else if(err.code===2)msg='Location उपलब्ध नहीं है। GPS चालू करें।';
-    else if(err.code===3)msg='Location timeout हो गया। दोबारा कोशिश करें।';
-    locError(msg);
+    var msg='लोकेशन नहीं मिली, दोबारा कोशिश करें।';
+    if(err.code===1)msg='लोकेशन की अनुमति नहीं मिली। कृपया अनुमति दें।';
+    else if(err.code===2)msg='लोकेशन उपलब्ध नहीं है। GPS चालू करें।';
+    else if(err.code===3)msg='समय समाप्त हो गया। दोबारा कोशिश करें।';
+    statusEl.innerHTML='<i class="ti ti-alert-circle" style="color:var(--red)"></i><span style="color:var(--red)">'+msg+'</span>';
+    btn.disabled=false;
   },{enableHighAccuracy:true,timeout:15000,maximumAge:0});
 }
-
-function locError(msg){
-  setLocBadge('ti-alert-triangle','error');
-  document.getElementById('loc-title').textContent='स्थान की अनुमति आवश्यक है';
-  document.getElementById('loc-msg').textContent=msg;
-  document.getElementById('loc-retry-btn').style.display='block';
-}
-
-// Start location check on load
-window.addEventListener('load',function(){checkLocation();});
 
 function pad(n){return n<10?'0'+n:n}
 function fmtD(d){return d.toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'})}
 function fmtT(d){return pad(d.getHours())+':'+pad(d.getMinutes())+':'+pad(d.getSeconds())}
-function tick(){var t=new Date(),s=fmtD(t)+' · '+fmtT(t);['clk0','clk1','clk2'].forEach(function(id){var e=document.getElementById(id);if(e)e.textContent=s;})}
+function tick(){
+  var t=new Date(),time=fmtT(t);
+  ['clk1','clk2'].forEach(function(id){
+    var e=document.getElementById(id);
+    if(e)e.innerHTML=time+'<span>Server Time</span>';
+  });
+}
 setInterval(tick,1000);tick();
 
 function showScreen(id){document.querySelectorAll('.screen').forEach(function(s){s.classList.remove('active')});var e=document.getElementById(id);if(e)e.classList.add('active');}
@@ -497,12 +466,12 @@ function showScreen(id){document.querySelectorAll('.screen').forEach(function(s)
 var lookupTimer=null;
 function onMob(){
   var v=document.getElementById('mob-in').value;
-  var fb=document.getElementById('mob-fb'),ch=document.getElementById('gchip'),btn=document.getElementById('btn-go');
+  var fb=document.getElementById('mob-fb'),ch=document.getElementById('gchip'),btn=document.getElementById('btn-loc');
   ch.innerHTML='';guard=null;btn.disabled=true;
+  document.getElementById('loc-status').innerHTML='';
   clearTimeout(lookupTimer);
   if(v.length===10){
     fb.innerHTML='<span style="color:var(--muted);font-size:13px">जांच हो रही है...</span>';
-    // Small debounce so we don't fire a request on every keystroke
     lookupTimer=setTimeout(function(){lookupGuard(v,fb,ch,btn);},300);
   } else {
     fb.innerHTML=v.length>0?'<span style="color:var(--muted);font-size:13px">10 digit ka number likhein</span>':'';
@@ -513,7 +482,6 @@ function lookupGuard(v,fb,ch,btn){
   fetch(SHEET_URL+'?action=lookup&mobile='+encodeURIComponent(v))
     .then(function(res){return res.json();})
     .then(function(data){
-      // Ignore stale responses if the input has changed since this request was sent
       if(document.getElementById('mob-in').value!==v)return;
       if(data && data.found){
         guard={mob:v,name:data.name,ini:data.ini};
@@ -534,25 +502,17 @@ function goAttend(){
   document.getElementById('att-sub').innerHTML=guard.name+' · +91 '+guard.mob;
   resetAtt();
   showScreen('s-attend');
-}
-
-// ---- Fallback (used only if getUserMedia isn't supported at all) ----
-function onPhotoChosen(event){
-  var file=event.target.files&&event.target.files[0];
-  if(!file)return;
-  var reader=new FileReader();
-  reader.onload=function(e){
-    setPhoto(e.target.result);
-  };
-  reader.readAsDataURL(file);
-}
-
-function setPhoto(dataUrl){
-  photoDataUrl=dataUrl;
-  var img=document.getElementById('photo-preview');
-  img.src=photoDataUrl;img.style.display='block';
-  document.getElementById('photo-btn').innerHTML='<i class="ti ti-refresh"></i> दोबारा खींचे';
-  checkReady();
+  setTimeout(function(){
+    if(userLat&&userLng){
+      var dist=Math.round(getDistanceMeters(userLat,userLng,OFFICE_LAT,OFFICE_LNG));
+      if(attendMapObj){attendMapObj.remove();attendMapObj=null;}
+      attendMapObj=buildMap('attend-map',dist);
+      var inRange=dist<=MAX_DIST;
+      document.getElementById('attend-dist-text').innerHTML=
+        (inRange?'<b style="color:var(--green)">कार्यालय के अंदर</b>':'<b style="color:var(--red)">कार्यालय से बाहर</b>')+
+        ' · दूरी: '+dist+' मीटर';
+    }
+  },100);
 }
 
 function onTypeChange(){
@@ -563,15 +523,34 @@ function onTypeChange(){
   checkReady();
 }
 
-function checkReady(){document.getElementById('btn-sub').disabled=!(photoDataUrl&&attType);}
+// ---- Fallback (used only if getUserMedia isn't supported at all) ----
+function onPhotoChosen(event){
+  var file=event.target.files&&event.target.files[0];
+  if(!file)return;
+  var reader=new FileReader();
+  reader.onload=function(e){ setPhoto(e.target.result); };
+  reader.readAsDataURL(file);
+}
+
+function setPhoto(dataUrl){
+  photoDataUrl=dataUrl;
+  var img=document.getElementById('photo-preview');
+  img.src=photoDataUrl;
+  document.getElementById('face-circle').classList.add('has-photo');
+  document.getElementById('photo-btn').innerHTML='<i class="ti ti-refresh"></i> दोबारा खींचे';
+  checkReady();
+}
+
+function checkReady(){
+  document.getElementById('btn-sub').disabled=!(photoDataUrl&&attType);
+}
 
 // ---- Live camera capture ----
 var camStream=null;
-var camFacing='user'; // 'user' = front camera (selfie), 'environment' = back camera
+var camFacing='user';
 
 function openCamera(){
   if(!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia)){
-    // Browser has no camera API support at all — fall back to file picker
     document.getElementById('photo-input').click();
     return;
   }
@@ -581,12 +560,14 @@ function openCamera(){
 
 function startStream(facing){
   stopStream();
+  var guide=document.getElementById('face-guide'),label=document.getElementById('face-guide-label');
+  if(guide){guide.style.display='block';}
+  if(label){label.style.display='block';}
   var constraints={video:{facingMode:{ideal:facing}},audio:false};
   navigator.mediaDevices.getUserMedia(constraints).then(function(stream){
     camStream=stream;
     var video=document.getElementById('cam-video');
     video.srcObject=stream;
-    // Only mirror the preview for the front camera (natural selfie feel)
     video.style.transform=(facing==='user')?'scaleX(-1)':'none';
   }).catch(function(err){
     var wrap=document.getElementById('cam-video-wrap');
@@ -598,10 +579,7 @@ function startStream(facing){
 }
 
 function stopStream(){
-  if(camStream){
-    camStream.getTracks().forEach(function(t){t.stop();});
-    camStream=null;
-  }
+  if(camStream){ camStream.getTracks().forEach(function(t){t.stop();}); camStream=null; }
 }
 
 function switchCamera(){
@@ -611,16 +589,12 @@ function switchCamera(){
 
 function capturePhoto(){
   var video=document.getElementById('cam-video');
-  if(!video.videoWidth){return;} // stream not ready yet
+  if(!video.videoWidth){return;}
   var canvas=document.getElementById('cam-canvas');
   canvas.width=video.videoWidth;
   canvas.height=video.videoHeight;
   var ctx=canvas.getContext('2d');
-  if(camFacing==='user'){
-    // Mirror the front-camera capture to match what the user saw in preview
-    ctx.translate(canvas.width,0);
-    ctx.scale(-1,1);
-  }
+  if(camFacing==='user'){ ctx.translate(canvas.width,0); ctx.scale(-1,1); }
   ctx.drawImage(video,0,0,canvas.width,canvas.height);
   var dataUrl=canvas.toDataURL('image/jpeg',0.85);
   setPhoto(dataUrl);
@@ -630,10 +604,9 @@ function capturePhoto(){
 function closeCamera(){
   stopStream();
   document.getElementById('cam-overlay').classList.remove('active');
-  // reset the video-wrap in case an error message replaced it
   var wrap=document.getElementById('cam-video-wrap');
   if(!wrap.querySelector('#cam-video')){
-    wrap.innerHTML='<video id="cam-video" autoplay playsinline muted></video>';
+    wrap.innerHTML='<video id="cam-video" autoplay playsinline muted></video><div class="face-guide" id="face-guide"></div><div class="face-guide-label" id="face-guide-label">चेहरे को घेरे के अंदर रखें</div>';
   }
 }
 
@@ -641,7 +614,7 @@ function doSubmit(){
   if(!photoDataUrl||!guard||!attType)return;
   var btn=document.getElementById('btn-sub');
   btn.disabled=true;
-  btn.innerHTML='<i class="ti ti-loader spinning"></i> दर्ज हो रहा है...';
+  btn.innerHTML='<i class="ti ti-loader spinning"></i> सबमिट हो रहा है...';
   var now=new Date(),d=fmtD(now),t=fmtT(now);
   var payload={
     name: guard.name,
@@ -657,18 +630,25 @@ function doSubmit(){
     mode:'no-cors',
     headers:{'Content-Type':'application/json'},
     body:JSON.stringify(payload)
-  }).then(function(){
-    showScreen('s-done');
-  }).catch(function(){
-    showScreen('s-done');
-  });
+  }).then(function(){ showDone(attType,d,t); })
+    .catch(function(){ showDone(attType,d,t); });
+}
+
+function showDone(type,d,t){
+  var typeLabel = type==='in' ? 'आने का समय' : 'जाने का समय';
+  document.getElementById('done-summary').innerHTML =
+    '<div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border)"><span style="font-size:12px;color:var(--muted)">नाम</span><span style="font-size:13px;font-weight:600">'+guard.name+'</span></div>'+
+    '<div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border)"><span style="font-size:12px;color:var(--muted)">प्रकार</span><span style="font-size:13px;font-weight:600">'+typeLabel+'</span></div>'+
+    '<div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border)"><span style="font-size:12px;color:var(--muted)">दिनांक</span><span style="font-size:13px;font-weight:600">'+d+'</span></div>'+
+    '<div style="display:flex;justify-content:space-between;padding:8px 0"><span style="font-size:12px;color:var(--muted)">समय</span><span style="font-size:13px;font-weight:600">'+t+'</span></div>';
+  showScreen('s-done');
 }
 
 function resetAtt(){
   photoDataUrl=null;
   attType=null;
   camFacing='user';
-  document.getElementById('photo-preview').style.display='none';
+  document.getElementById('face-circle').classList.remove('has-photo');
   document.getElementById('photo-preview').src='';
   document.getElementById('photo-input').value='';
   document.getElementById('photo-btn').innerHTML='<i class="ti ti-camera"></i> फ़ोटो खींचे';
@@ -676,8 +656,18 @@ function resetAtt(){
   document.getElementById('type-opt-in').classList.remove('checked');
   document.getElementById('type-opt-out').classList.remove('checked');
   document.getElementById('btn-sub').disabled=true;
+  document.getElementById('btn-sub').innerHTML='उपस्थिति दर्ज करें';
 }
-function logout(){guard=null;document.getElementById('mob-in').value='';document.getElementById('mob-fb').innerHTML='';document.getElementById('gchip').innerHTML='';document.getElementById('btn-go').disabled=true;showScreen('s-login');}
+
+function logout(){
+  guard=null;
+  document.getElementById('mob-in').value='';
+  document.getElementById('mob-fb').innerHTML='';
+  document.getElementById('gchip').innerHTML='';
+  document.getElementById('loc-status').innerHTML='';
+  document.getElementById('btn-loc').disabled=true;
+  showScreen('s-login');
+}
 </script>
 </body>
 </html>
