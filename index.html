@@ -411,10 +411,10 @@ function buildMap(containerId, dist){
   L.marker([OFFICE_LAT,OFFICE_LNG],{icon:officeIcon}).addTo(map);
   L.marker([userLat,userLng],{icon:userIcon}).addTo(map);
 
-  // Fixed city-level zoom (~10-15km visible) instead of tightly fitting the
-  // markers, so nearby town/area names show for context rather than a
-  // near-blank close-up of the 100m geofence circle.
-  map.setView([userLat,userLng],12);
+  // Fixed zoom showing roughly a 2km radius around the user, so nearby
+  // area/road names are visible instead of a tight close-up of the geofence.
+  map.setView([userLat,userLng],14);
+  setTimeout(function(){ map.invalidateSize(); },100);
   return map;
 }
 
