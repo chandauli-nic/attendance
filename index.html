@@ -380,7 +380,7 @@ var guard=null,photoDataUrl=null,userLat=null,userLng=null,attType=null;
 var SHEET_URL = 'https://script.google.com/macros/s/AKfycbyeiQCipr0cUGPfAOIT4wVTUnBOQFRz-eusLc__S2pXYdhrpUvIpLpTnQ3-4of6aaLVHA/exec';
 
 // Office coordinates (Chandauli, UP)
-var OFFICE_LAT=25.26924645249046, OFFICE_LNG=83.26351636518584, MAX_DIST=300;
+var OFFICE_LAT=25.26924645249046, OFFICE_LNG=83.26351636518584, MAX_DIST=100;
 
 // Fix Leaflet's default marker icons (otherwise they render broken when loaded from a CDN)
 L.Icon.Default.mergeOptions({
@@ -427,6 +427,13 @@ function requestLocation(){
     return;
   }
 
+  tryGetLocation(true);
+}
+
+function tryGetLocation(isFirstAttempt){
+  var statusEl=document.getElementById('loc-status');
+  var btn=document.getElementById('btn-loc');
+
   navigator.geolocation.getCurrentPosition(function(pos){
     userLat=pos.coords.latitude;
     userLng=pos.coords.longitude;
@@ -440,13 +447,24 @@ function requestLocation(){
       btn.disabled=false;
     }
   },function(err){
+    // On a timeout, automatically retry once with lower accuracy and a longer
+    // window instead of failing immediately — GPS often just needs more time,
+    // especially indoors or with a weak signal.
+    if(err.code===3 && isFirstAttempt){
+      statusEl.innerHTML='<i class="ti ti-loader spinning" style="color:var(--muted)"></i><span style="color:var(--muted)">थोड़ा समय लग रहा है, कृपया प्रतीक्षा करें...</span>';
+      tryGetLocation(false);
+      return;
+    }
     var msg='लोकेशन नहीं मिली, दोबारा कोशिश करें।';
     if(err.code===1)msg='लोकेशन की अनुमति नहीं मिली। कृपया अनुमति दें।';
     else if(err.code===2)msg='लोकेशन उपलब्ध नहीं है। GPS चालू करें।';
-    else if(err.code===3)msg='समय समाप्त हो गया। दोबारा कोशिश करें।';
+    else if(err.code===3)msg='लोकेशन नहीं मिल सकी। खुले स्थान पर जाकर दोबारा कोशिश करें।';
     statusEl.innerHTML='<i class="ti ti-alert-circle" style="color:var(--red)"></i><span style="color:var(--red)">'+msg+'</span>';
     btn.disabled=false;
-  },{enableHighAccuracy:true,timeout:15000,maximumAge:0});
+  },isFirstAttempt
+      ? {enableHighAccuracy:true,timeout:15000,maximumAge:0}
+      : {enableHighAccuracy:false,timeout:25000,maximumAge:60000}
+  );
 }
 
 function pad(n){return n<10?'0'+n:n}
