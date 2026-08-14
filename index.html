@@ -402,7 +402,6 @@ var loginMapObj=null;
 function buildMap(containerId, dist){
   var inRange = dist<=MAX_DIST;
   var map=L.map(containerId,{zoomControl:false,attributionControl:false,dragging:false,scrollWheelZoom:false,tap:false});
-  map.setView([userLat,userLng],16);
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19}).addTo(map);
 
   var officeIcon=L.divIcon({className:'',html:'<div style="width:30px;height:30px;border-radius:50%;background:#0B1F44;border:3px solid #fff;box-shadow:0 2px 6px rgba(0,0,0,0.3);display:flex;align-items:center;justify-content:center;font-size:13px;color:#fff">🏢</div>',iconSize:[30,30],iconAnchor:[15,15]});
@@ -412,8 +411,10 @@ function buildMap(containerId, dist){
   L.marker([OFFICE_LAT,OFFICE_LNG],{icon:officeIcon}).addTo(map);
   L.marker([userLat,userLng],{icon:userIcon}).addTo(map);
 
-  var bounds=L.latLngBounds([[userLat,userLng],[OFFICE_LAT,OFFICE_LNG]]);
-  map.fitBounds(bounds,{padding:[28,28],maxZoom:17});
+  // Fixed city-level zoom (~10-15km visible) instead of tightly fitting the
+  // markers, so nearby town/area names show for context rather than a
+  // near-blank close-up of the 100m geofence circle.
+  map.setView([userLat,userLng],12);
   return map;
 }
 
