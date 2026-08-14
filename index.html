@@ -230,6 +230,13 @@ html,body{background:var(--bg);min-height:100vh;font-family:var(--font)}
   display:flex;align-items:center;justify-content:center;
   font-size:30px;color:#fff;margin:0 auto 14px;position:relative;z-index:1;
 }
+.suc-topbar{
+  background:linear-gradient(160deg,#0f3d1f 0%,#16a34a 100%);
+  padding:40px 24px 34px;text-align:center;position:relative;overflow:hidden;flex-shrink:0;
+}
+.suc-topbar::before{content:'';position:absolute;top:-50px;right:-50px;width:160px;height:160px;border-radius:50%;background:rgba(255,255,255,0.06)}
+.suc-title{font-size:21px;font-weight:800;color:#fff;margin-bottom:6px;position:relative;z-index:1}
+.suc-subtitle{font-size:13.5px;color:rgba(255,255,255,0.9);line-height:1.6;position:relative;z-index:1}
 
 @keyframes spin{to{transform:rotate(360deg)}}
 .spinning{animation:spin 1s linear infinite;display:inline-block}
@@ -382,13 +389,18 @@ html,body{background:var(--bg);min-height:100vh;font-family:var(--font)}
 
 <!-- DONE -->
 <div class="screen" id="s-done">
-  <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 24px;text-align:center;background:linear-gradient(180deg,#0f3d1f 0%,var(--bg) 340px)">
+  <div class="suc-topbar">
     <div class="suc-badge">✓</div>
-    <div style="font-size:22px;font-weight:800;color:#fff;margin-bottom:6px;position:relative;z-index:1">सफलतापूर्वक भेजा गया!</div>
-    <div style="font-size:14px;color:rgba(255,255,255,0.85);line-height:1.6;margin-bottom:32px;position:relative;z-index:1">आपकी उपस्थिति दर्ज हो गई है। धन्यवाद!</div>
-    <div class="card" style="width:100%;max-width:340px;text-align:left" id="done-summary"></div>
+    <div class="suc-title">सफलतापूर्वक भेजा गया!</div>
+    <div class="suc-subtitle">आपकी उपस्थिति दर्ज हो गई है। धन्यवाद!</div>
   </div>
-  <div class="app-footer" style="padding:16px 24px 24px">National Informatics Centre · Chandauli, UP</div>
+  <div class="sheet">
+    <div class="card" id="done-summary"></div>
+    <button class="btn-primary" onclick="logout()">
+      नई एंट्री करें <i class="ti ti-arrow-right"></i>
+    </button>
+    <div class="app-footer">National Informatics Centre · Chandauli, UP</div>
+  </div>
 </div>
 
 </div>
