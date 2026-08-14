@@ -153,9 +153,12 @@ html,body{background:var(--bg);min-height:100vh;font-family:var(--font)}
   position:relative;
 }
 .type-opt-icon{
-  width:34px;height:34px;border-radius:10px;display:flex;align-items:center;justify-content:center;
-  font-size:17px;background:var(--border);color:var(--muted);transition:background .15s,color .15s;
+  width:36px;height:36px;border-radius:11px;display:flex;align-items:center;justify-content:center;
+  transition:background .15s,color .15s;
 }
+.type-opt-icon svg{width:19px;height:19px}
+#type-opt-in .type-opt-icon{background:var(--green-light);color:var(--green)}
+#type-opt-out .type-opt-icon{background:#FFF1E6;color:var(--orange)}
 .type-opt input{position:absolute;opacity:0;width:0;height:0}
 #type-opt-in:has(input:checked){border-color:var(--green);background:var(--green-light);box-shadow:0 0 0 3px rgba(22,163,74,0.12)}
 #type-opt-out:has(input:checked){border-color:var(--orange);background:#FFF1E6;box-shadow:0 0 0 3px rgba(255,122,26,0.12)}
@@ -172,16 +175,19 @@ html,body{background:var(--bg);min-height:100vh;font-family:var(--font)}
 /* FACE CAPTURE CIRCLE */
 .face-capture-wrap{display:flex;flex-direction:column;align-items:center;gap:14px}
 .face-circle{
-  width:170px;height:170px;border-radius:50%;
-  border:3px dashed var(--border);
+  width:172px;height:172px;border-radius:50%;
+  border:3px dashed var(--navy-3);
   display:flex;align-items:center;justify-content:center;
-  position:relative;overflow:hidden;background:#F8FAFF;flex-shrink:0;cursor:pointer;
+  position:relative;overflow:hidden;
+  background:linear-gradient(135deg,#EEF3FF,#F5F9FF);
+  flex-shrink:0;cursor:pointer;
+  box-shadow:0 4px 16px -4px rgba(27,58,115,0.15);
 }
 .face-circle.has-photo{border-style:solid;border-color:var(--green)}
 .face-circle img{width:100%;height:100%;object-fit:cover;display:none}
-.face-circle-placeholder{display:flex;flex-direction:column;align-items:center;gap:8px;color:var(--muted)}
-.face-circle-placeholder i{font-size:34px}
-.face-circle-placeholder span{font-size:11.5px;font-weight:500;text-align:center;padding:0 20px}
+.face-circle-placeholder{display:flex;flex-direction:column;align-items:center;gap:10px;color:var(--navy-3)}
+.face-circle-placeholder svg{width:36px;height:36px}
+.face-circle-placeholder span{font-size:11.5px;font-weight:600;text-align:center;padding:0 22px;color:var(--muted)}
 .face-check-badge{
   position:absolute;bottom:6px;right:6px;width:30px;height:30px;border-radius:50%;
   background:var(--green);color:#fff;display:none;align-items:center;justify-content:center;
@@ -190,6 +196,23 @@ html,body{background:var(--bg);min-height:100vh;font-family:var(--font)}
 .face-circle.has-photo .face-check-badge{display:flex}
 .face-circle.has-photo .face-circle-placeholder{display:none}
 .face-circle.has-photo img{display:block}
+
+/* AVATAR-STYLE HEADER ICON */
+.topbar-avatar{
+  width:36px;height:36px;border-radius:10px;
+  background:rgba(255,255,255,0.18);
+  border:1.5px solid rgba(255,255,255,0.35);
+  display:flex;align-items:center;justify-content:center;
+  font-size:13px;font-weight:700;color:#fff;letter-spacing:0.02em;
+  flex-shrink:0;
+}
+
+/* SPINNER (pure CSS, no icon-font/network dependency) */
+.spinner-ring{
+  display:inline-block;width:16px;height:16px;flex-shrink:0;
+  border:2.5px solid rgba(255,255,255,0.35);border-top-color:#fff;
+  border-radius:50%;animation:spin .7s linear infinite;
+}
 
 /* MAP CARD */
 .map-card{padding:0;overflow:hidden}
@@ -305,7 +328,7 @@ html,body{background:var(--bg);min-height:100vh;font-family:var(--font)}
   <div class="topbar">
     <div class="topbar-row">
       <div class="topbar-left">
-        <div class="topbar-icon" onclick="logout()" style="cursor:pointer"><i class="ti ti-arrow-left"></i></div>
+        <div class="topbar-avatar" id="att-avatar" onclick="logout()" style="cursor:pointer" title="वापस जाएं">--</div>
         <div>
           <div class="topbar-title">उपस्थिति दर्ज करें</div>
           <div class="topbar-sub" id="att-sub">—</div>
@@ -321,12 +344,12 @@ html,body{background:var(--bg);min-height:100vh;font-family:var(--font)}
       <div class="type-toggle">
         <label class="type-opt" id="type-opt-in">
           <input type="radio" name="att-type" value="in" onchange="onTypeChange()"/>
-          <span class="type-opt-icon"><i class="ti ti-login-2"></i></span>
+          <span class="type-opt-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><path d="M10 17l5-5-5-5"/><path d="M15 12H3"/></svg></span>
           <span>आने का समय</span>
         </label>
         <label class="type-opt" id="type-opt-out">
           <input type="radio" name="att-type" value="out" onchange="onTypeChange()"/>
-          <span class="type-opt-icon"><i class="ti ti-logout-2"></i></span>
+          <span class="type-opt-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="M16 17l5-5-5-5"/><path d="M21 12H9"/></svg></span>
           <span>जाने का समय</span>
         </label>
       </div>
@@ -337,14 +360,14 @@ html,body{background:var(--bg);min-height:100vh;font-family:var(--font)}
       <div class="face-capture-wrap">
         <div class="face-circle" id="face-circle" onclick="openCamera()">
           <div class="face-circle-placeholder">
-            <i class="ti ti-camera-plus"></i>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3.2"/><path d="M18.5 8.5v.01"/></svg>
             <span>फ़ोटो लेने के लिए टैप करें</span>
           </div>
           <img id="photo-preview"/>
-          <div class="face-check-badge"><i class="ti ti-check"></i></div>
+          <div class="face-check-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" width="15" height="15"><path d="M20 6L9 17l-5-5"/></svg></div>
         </div>
         <button class="btn-secondary" id="photo-btn" onclick="openCamera()" style="max-width:220px">
-          <i class="ti ti-camera"></i> फ़ोटो खींचे
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3.2"/></svg> फ़ोटो खींचे
         </button>
         <input type="file" id="photo-input" accept="image/*" capture="user" style="display:none" onchange="onPhotoChosen(event)"/>
       </div>
@@ -625,6 +648,7 @@ function verifyPin(mobile,pin,fb,btn){
 function goAttend(){
   if(!guard)return;
   document.getElementById('att-sub').innerHTML=guard.name+' · +91 '+guard.mob;
+  document.getElementById('att-avatar').textContent=guard.ini;
   resetAtt();
   showScreen('s-attend');
 }
@@ -651,7 +675,7 @@ function setPhoto(dataUrl){
   var img=document.getElementById('photo-preview');
   img.src=photoDataUrl;
   document.getElementById('face-circle').classList.add('has-photo');
-  document.getElementById('photo-btn').innerHTML='<i class="ti ti-refresh"></i> दोबारा खींचे';
+  document.getElementById('photo-btn').innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><path d="M23 4v6h-6"/><path d="M1 20v-6h6"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg> दोबारा खींचे';
   checkReady();
 }
 
@@ -728,7 +752,7 @@ function doSubmit(){
   if(!photoDataUrl||!guard||!attType)return;
   var btn=document.getElementById('btn-sub');
   btn.disabled=true;
-  btn.innerHTML='<i class="ti ti-loader spinning"></i> सबमिट हो रहा है...';
+  btn.innerHTML='<span class="spinner-ring"></span> सबमिट हो रहा है, कृपया प्रतीक्षा करें...';
   var now=new Date(),d=fmtD(now),t=fmtT(now);
   var payload={
     name: guard.name,
@@ -765,7 +789,7 @@ function resetAtt(){
   document.getElementById('face-circle').classList.remove('has-photo');
   document.getElementById('photo-preview').src='';
   document.getElementById('photo-input').value='';
-  document.getElementById('photo-btn').innerHTML='<i class="ti ti-camera"></i> फ़ोटो खींचे';
+  document.getElementById('photo-btn').innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3.2"/></svg> फ़ोटो खींचे';
   document.querySelectorAll('input[name="att-type"]').forEach(function(r){r.checked=false;});
   document.getElementById('type-opt-in').classList.remove('checked');
   document.getElementById('type-opt-out').classList.remove('checked');
