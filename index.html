@@ -292,25 +292,25 @@ html,body{background:var(--bg);min-height:100vh;font-family:var(--font)}
   </div>
   <div class="sheet">
     <div class="card">
-      <div class="card-title"><i class="ti ti-device-mobile"></i> Mobile Number</div>
-      <div class="input-group">
-        <span class="input-prefix"><i class="ti ti-phone" style="font-size:15px"></i>+91</span>
-        <input type="tel" id="mob-in" maxlength="10" placeholder="10-digit number" oninput="this.value=this.value.replace(/\D/g,'');onMob()"/>
+      <div id="cred-inputs">
+        <div class="card-title"><i class="ti ti-device-mobile"></i> Mobile Number</div>
+        <div class="input-group">
+          <span class="input-prefix"><i class="ti ti-phone" style="font-size:15px"></i>+91</span>
+          <input type="tel" id="mob-in" maxlength="10" placeholder="10-digit number" oninput="this.value=this.value.replace(/\D/g,'');onCred()"/>
+        </div>
+
+        <div class="card-title" style="margin-top:16px"><i class="ti ti-lock"></i> PIN</div>
+        <div class="input-group">
+          <span class="input-prefix"><i class="ti ti-key" style="font-size:15px"></i>PIN</span>
+          <input type="password" inputmode="numeric" id="pin-in" maxlength="4" placeholder="4-digit PIN" oninput="this.value=this.value.replace(/\D/g,'');onCred()"/>
+        </div>
+
+        <div class="input-fb" id="mob-fb"></div>
       </div>
-      <div class="input-fb" id="mob-fb"></div>
       <div id="gchip"></div>
     </div>
 
-    <div class="card" id="pin-card" style="display:none">
-      <div class="card-title"><i class="ti ti-lock"></i> PIN दर्ज करें</div>
-      <div class="input-group">
-        <span class="input-prefix"><i class="ti ti-key" style="font-size:15px"></i>PIN</span>
-        <input type="password" inputmode="numeric" id="pin-in" maxlength="4" placeholder="4-digit PIN" oninput="this.value=this.value.replace(/\D/g,'');onPin()"/>
-      </div>
-      <div class="input-fb" id="pin-fb"></div>
-    </div>
-
-    <button class="btn-primary" id="btn-loc" disabled onclick="requestLocation()">
+    <button class="btn-primary" id="btn-loc" disabled style="display:none" onclick="requestLocation()">
       <i class="ti ti-map-pin"></i> अपनी लोकेशन चालू करें
     </button>
     <div class="loc-cta-status" id="loc-status"></div>
@@ -396,9 +396,6 @@ html,body{background:var(--bg);min-height:100vh;font-family:var(--font)}
   </div>
   <div class="sheet">
     <div class="card" id="done-summary"></div>
-    <button class="btn-primary" onclick="logout()">
-      नई एंट्री करें <i class="ti ti-arrow-right"></i>
-    </button>
     <div class="app-footer">National Informatics Centre · Chandauli, UP</div>
   </div>
 </div>
@@ -544,33 +541,27 @@ setInterval(tick,1000);tick();
 function showScreen(id){document.querySelectorAll('.screen').forEach(function(s){s.classList.remove('active')});var e=document.getElementById(id);if(e)e.classList.add('active');}
 
 var lookupTimer=null;
-function onMob(){
+function onCred(){
   var v=document.getElementById('mob-in').value;
+  var pin=document.getElementById('pin-in').value;
   var fb=document.getElementById('mob-fb'),ch=document.getElementById('gchip'),btn=document.getElementById('btn-loc');
   ch.innerHTML='';guard=null;btn.disabled=true;
-  btn.style.display='flex';
+  btn.style.display='none';
   document.getElementById('btn-continue').style.display='none';
   document.getElementById('login-map-card').style.display='none';
   document.getElementById('loc-status').innerHTML='';
-  hidePinCard();
   clearTimeout(lookupTimer);
-  if(v.length===10){
+  if(v.length===10 && pin.length===4){
     fb.innerHTML='<span style="color:var(--muted);font-size:13px">जांच हो रही है...</span>';
-    lookupTimer=setTimeout(function(){lookupGuard(v,fb,ch,btn);},300);
+    lookupTimer=setTimeout(function(){verifyLogin(v,pin,fb,ch,btn);},300);
   } else {
-    fb.innerHTML=v.length>0?'<span style="color:var(--muted);font-size:13px">10 digit ka number likhein</span>':'';
+    fb.innerHTML='';
   }
 }
 
-function hidePinCard(){
-  document.getElementById('pin-card').style.display='none';
-  document.getElementById('pin-in').value='';
-  document.getElementById('pin-fb').innerHTML='';
-}
-
 var jsonpCounter=0;
-// Generic JSONP request helper (used for both the mobile lookup and PIN check),
-// since Apps Script web apps don't send CORS headers a plain fetch() needs.
+// JSONP request helper, since Apps Script web apps don't send CORS headers
+// a plain fetch() from GitHub Pages would need.
 function jsonpRequest(params, onResult, onFail){
   var cbName='__cb_'+(jsonpCounter++);
   var script=document.createElement('script');
@@ -605,56 +596,42 @@ function jsonpRequest(params, onResult, onFail){
   document.body.appendChild(script);
 }
 
-function lookupGuard(v,fb,ch,btn){
-  jsonpRequest({action:'lookup',mobile:v},function(data){
-    if(document.getElementById('mob-in').value!==v)return;
-    if(data && data.found){
-      guard={mob:v,name:data.name,ini:data.ini};
-      fb.innerHTML='<i class="ti ti-circle-check" style="color:var(--green);font-size:15px"></i><span style="color:var(--green);font-size:13px;font-weight:500">Number verified!</span>';
-      ch.innerHTML='<div class="user-chip"><div class="avatar">'+data.ini+'</div><div><div class="user-chip-name">'+data.name+'</div><div class="user-chip-mob">+91 '+v+'</div></div></div>';
-      // Mobile number alone isn't secret enough to prove identity, so require
-      // the guard's private PIN before allowing them any further.
-      document.getElementById('pin-card').style.display='block';
-      document.getElementById('pin-in').value='';
-      document.getElementById('pin-fb').innerHTML='';
-      document.getElementById('pin-in').focus();
-    } else {
-      fb.innerHTML='<i class="ti ti-alert-circle" style="color:var(--red);font-size:15px"></i><span style="color:var(--red);font-size:13px;font-weight:500">Number registered nahi hai</span>';
-    }
-  },function(){
-    fb.innerHTML='<i class="ti ti-alert-circle" style="color:var(--red);font-size:15px"></i><span style="color:var(--red);font-size:13px;font-weight:500">जांच नहीं हो सकी, दोबारा कोशिश करें</span>';
-  });
-}
-
-var pinTimer=null;
-function onPin(){
-  var pin=document.getElementById('pin-in').value;
-  var fb=document.getElementById('pin-fb'),btn=document.getElementById('btn-loc');
-  btn.disabled=true;
-  clearTimeout(pinTimer);
-  if(!guard){fb.innerHTML='';return;}
-  if(pin.length===4){
-    fb.innerHTML='<span style="color:var(--muted);font-size:13px">जांच हो रही है...</span>';
-    pinTimer=setTimeout(function(){verifyPin(guard.mob,pin,fb,btn);},250);
-  } else {
-    fb.innerHTML=pin.length>0?'<span style="color:var(--muted);font-size:13px">4 अंकों का PIN डालें</span>':'';
-  }
-}
-
-function verifyPin(mobile,pin,fb,btn){
-  jsonpRequest({action:'verifypin',mobile:mobile,pin:pin},function(data){
-    if(document.getElementById('pin-in').value!==pin)return; // stale response, ignore
+function verifyLogin(v,pin,fb,ch,btn){
+  jsonpRequest({action:'login',mobile:v,pin:pin},function(data){
+    // Ignore a stale response if the person kept typing after this request was sent
+    if(document.getElementById('mob-in').value!==v || document.getElementById('pin-in').value!==pin)return;
     if(data && data.valid){
-      fb.innerHTML='<i class="ti ti-circle-check" style="color:var(--green);font-size:15px"></i><span style="color:var(--green);font-size:13px;font-weight:500">PIN सही है!</span>';
+      guard={mob:v,name:data.name,ini:data.ini};
+      fb.innerHTML='';
+      // Verified — collapse the input fields away and show just the profile,
+      // since there's nothing more to do with them at this point.
+      document.getElementById('cred-inputs').style.display='none';
+      ch.innerHTML='<div class="user-chip"><div class="avatar">'+data.ini+'</div><div style="flex:1"><div class="user-chip-name">'+data.name+'</div><div class="user-chip-mob">+91 '+v+'</div></div></div>';
+      btn.style.display='flex';
       btn.disabled=false;
     } else {
-      fb.innerHTML='<i class="ti ti-alert-circle" style="color:var(--red);font-size:15px"></i><span style="color:var(--red);font-size:13px;font-weight:500">गलत PIN, दोबारा कोशिश करें</span>';
-      btn.disabled=true;
+      // Deliberately generic — doesn't reveal whether the mobile number
+      // itself is registered, only that the combination didn't match.
+      fb.innerHTML='<i class="ti ti-alert-circle" style="color:var(--red);font-size:15px"></i><span style="color:var(--red);font-size:13px;font-weight:500">गलत मोबाइल नंबर या PIN</span>';
     }
   },function(){
     fb.innerHTML='<i class="ti ti-alert-circle" style="color:var(--red);font-size:15px"></i><span style="color:var(--red);font-size:13px;font-weight:500">जांच नहीं हो सकी, दोबारा कोशिश करें</span>';
-    btn.disabled=true;
   });
+}
+
+function changeLogin(){
+  guard=null;
+  document.getElementById('mob-in').value='';
+  document.getElementById('pin-in').value='';
+  document.getElementById('mob-fb').innerHTML='';
+  document.getElementById('gchip').innerHTML='';
+  document.getElementById('cred-inputs').style.display='block';
+  document.getElementById('btn-loc').disabled=true;
+  document.getElementById('btn-loc').style.display='none';
+  document.getElementById('btn-continue').style.display='none';
+  document.getElementById('login-map-card').style.display='none';
+  document.getElementById('loc-status').innerHTML='';
+  document.getElementById('mob-in').focus();
 }
 
 function goAttend(){
@@ -792,6 +769,17 @@ function showDone(type,d,t){
     '<div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border)"><span style="font-size:12px;color:var(--muted)">दिनांक</span><span style="font-size:13px;font-weight:600">'+d+'</span></div>'+
     '<div style="display:flex;justify-content:space-between;padding:8px 0"><span style="font-size:12px;color:var(--muted)">समय</span><span style="font-size:13px;font-weight:600">'+t+'</span></div>';
   showScreen('s-done');
+
+  // Auto-exit after 10 seconds: a webpage can't force-close its own browser
+  // tab unless it was opened via script (a browser security restriction), so
+  // this returns to the front page, ready for the next person — the closest
+  // practical equivalent to "ending the session" from inside a web page.
+  setTimeout(function(){
+    if(document.getElementById('s-done').classList.contains('active')){
+      window.close(); // best-effort; silently does nothing if the browser blocks it
+      logout();
+    }
+  },10000);
 }
 
 function resetAtt(){
@@ -812,14 +800,15 @@ function resetAtt(){
 function logout(){
   guard=null;
   document.getElementById('mob-in').value='';
+  document.getElementById('pin-in').value='';
   document.getElementById('mob-fb').innerHTML='';
   document.getElementById('gchip').innerHTML='';
+  document.getElementById('cred-inputs').style.display='block';
   document.getElementById('loc-status').innerHTML='';
   document.getElementById('btn-loc').disabled=true;
-  document.getElementById('btn-loc').style.display='flex';
+  document.getElementById('btn-loc').style.display='none';
   document.getElementById('btn-continue').style.display='none';
   document.getElementById('login-map-card').style.display='none';
-  hidePinCard();
   showScreen('s-login');
 }
 </script>
