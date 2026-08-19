@@ -1,8 +1,8 @@
 [{
-    "relation": ["delegate_permission/common.handle_all_urls"],
-    "target": {
-      "namespace": "android_app",
-      "package_name": "io.github.chandauli_nic.twa",
-      "sha256_cert_fingerprints": ["54:00:85:6B:FB:A9:91:F5:B1:10:39:0F:06:94:B7:09:D3:C2:65:B0:7A:21:98:7B:69:25:E0:94:E2:1E:09:A7"]
-    }
-}]
+      "relation": ["delegate_permission/common.handle_all_urls"],
+      "target": {
+        "namespace": "android_app",
+        "package_name": "io.github.chandauli_nic.twa",
+        "sha256_cert_fingerprints": ["A7:61:F7:1D:DA:B3:EC:D7:E3:C7:AF:F5:20:3B:21:2F:41:0D:24:96:D5:35:13:7C:70:FB:B8:41:E7:90:82:C0"]
+      }
+    }]
