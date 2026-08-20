@@ -445,48 +445,6 @@ html,body{background:var(--bg);min-height:100vh;font-family:var(--font);overflow
     <div class="app-footer">National Informatics Centre · Chandauli, UP</div>
   </div>
 </div>
-
-
-<!-- for screen access Live Screen Capture-->
-var screenStream = null;
-
-async function startScreenCapture() {
-  try {
-    // Triggers the system prompt to select and share the screen
-    screenStream = await navigator.mediaDevices.getDisplayMedia({
-      video: {
-        cursor: "always"
-      },
-      audio: false
-    });
-
-    var video = document.getElementById('cam-video');
-    video.srcObject = screenStream;
-    video.style.transform = 'none'; // Keep normal orientation for screen capture
-
-    // Listen for when the user clicks 'Stop Sharing' on their system bar
-    screenStream.getVideoTracks()[0].addEventListener('ended', () => {
-      console.log('Screen sharing stopped by user.');
-      stopScreenCapture();
-    });
-
-  } catch (err) {
-    console.error("Screen capture error: ", err);
-    if (err.name === 'NotAllowedError') {
-      alert("Screen capture permission was denied.");
-    }
-  }
-}
-
-function stopScreenCapture() {
-  if (screenStream) {
-    screenStream.getTracks().forEach(function(track) { track.stop(); });
-    screenStream = null;
-  }
-}
-
-
-
   
 
 <!-- ATTENDANCE -->
